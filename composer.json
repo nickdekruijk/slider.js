@@ -15,5 +15,5 @@
     "minimum-stability": "dev",
     "require": {
         "components/jquery": "*"
-    },
+    }
 }

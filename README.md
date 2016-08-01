@@ -1,4 +1,6 @@
 # slider.js
+A basis slider plugin to create slideshows/faders on your webpage. No fancy stuff, just easy to use yet powerfull enough for most situations. Fully customizable with CSS.
+
 
 ##Usage
 HTML:

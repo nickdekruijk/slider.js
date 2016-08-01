@@ -1,0 +1,19 @@
+{
+    "name": "nickdekruijk/slider.js",
+    "description": "A simple jQuery slider plugin",
+    "license": "MIT",
+	"keywords": [
+		"slider",
+		"jquery"
+	],
+    "authors": [
+        {
+            "name": "Nick de Kruijk",
+            "email": "git@nickdekruijk.nl"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "jquery": ">=1.6",
+    },
+}

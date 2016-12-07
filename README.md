@@ -20,22 +20,22 @@ The slides(divs) inside the viewport will be set to absolute positioned, 100% wi
 
 You do need to add CSS for the dots if you want them, for example:
 ```css
-    DIV.slider .dots {display:block;z-index:10;position:absolute;left:0;right:0;text-align:center}
-    DIV.slider .dots>SPAN {display:inline-block;width:16px;height:16px;border-radius:10px;border:1px solid #fff;margin:10px 5px 0;color:transparent;font-size:11px;line-height:15px}
-    DIV.slider .dots>SPAN:hover {background-color:rgba(255,255,255,0.5);cursor:pointer}
-    DIV.slider .dots>SPAN.activeslide {background-color:#fff}
+DIV.slider .dots {display:block;z-index:10;position:absolute;left:0;right:0;text-align:center}
+DIV.slider .dots>SPAN {display:inline-block;width:16px;height:16px;border-radius:10px;border:1px solid #fff;margin:10px 5px 0;color:transparent;font-size:11px;line-height:15px}
+DIV.slider .dots>SPAN:hover {background-color:rgba(255,255,255,0.5);cursor:pointer}
+DIV.slider .dots>SPAN.activeslide {background-color:#fff}
 ```
 You probably want CSS for the previous and next buttons too, for example:
 ```css
-    DIV.slider:hover .next,
-    DIV.slider:hover .prev {position:absolute;top:50%;height:50px;width:50px;border-radius:50px;border:2px transparent #fff;margin:-27px 25px 0;z-index:10;background-color:rgba(0,0,0,0.25)}
-    DIV.slider:hover .next {right:0}
-    DIV.slider:hover .next>SPAN,
-    DIV.slider:hover .prev>SPAN {position:absolute;border-top:3px solid #fff;border-right:3px solid #fff;width:20px;height:20px}
-    DIV.slider:hover .next>SPAN {transform:rotate(45deg);top:13px;left:9px}
-    DIV.slider:hover .prev>SPAN {transform:rotate(-135deg);top:13px;left:17px}
-    DIV.slider:hover .next:hover,
-    DIV.slider:hover .prev:hover {background-color:rgba(0,0,0,0.6);cursor:pointer}
+DIV.slider:hover .next,
+DIV.slider:hover .prev {position:absolute;top:50%;height:50px;width:50px;border-radius:50px;border:2px transparent #fff;margin:-27px 25px 0;z-index:10;background-color:rgba(0,0,0,0.25)}
+DIV.slider:hover .next {right:0}
+DIV.slider:hover .next>SPAN,
+DIV.slider:hover .prev>SPAN {position:absolute;border-top:3px solid #fff;border-right:3px solid #fff;width:20px;height:20px}
+DIV.slider:hover .next>SPAN {transform:rotate(45deg);top:13px;left:9px}
+DIV.slider:hover .prev>SPAN {transform:rotate(-135deg);top:13px;left:17px}
+DIV.slider:hover .next:hover,
+DIV.slider:hover .prev:hover {background-color:rgba(0,0,0,0.6);cursor:pointer}
 ```
 
 ###JS
@@ -43,7 +43,7 @@ You probably want CSS for the previous and next buttons too, for example:
 $('DIV.slider').slider({
     option1:'value1',
     option2:'value2'
-);
+});
 ```
 
 ###Options: default value|other options

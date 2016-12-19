@@ -57,4 +57,5 @@ touchwipe: true|false           # Enable touch device left and right swipe gestu
 sliderspeed: 5000               # Time to wait in milliseconds before next slide is shown when autoplay=true
 slideselector: 'div'            # The viewport DOM child element that will represent slides. Could also be .slide if you have html like <div class="slider"><div class="slide">Slide content</div> etc.
 activeslide: 'activeslide'      # Class to add to the active slide/dot
+lazy: false                     # Lazy load images in the slider, set data-lazy="imageurl" on elements. On an img the src attribute will be set and the background-image style will be set on other element types
 ```

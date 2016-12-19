@@ -3,7 +3,7 @@
     ====================
     (c)2016 Nick de Kruijk
     
-    Version 0.0.1
+    Version 0.0.2
     
     Usage:
     HTML:
@@ -51,6 +51,7 @@
     sliderspeed: 5000               # Time to wait in milliseconds before next slide is shown when autoplay=true
     slideselector: 'div'            # The viewport DOM child element that will represent slides. Could also be .slide if you have html like <div class="slider"><div class="slide">Slide content</div> etc.
     activeslide: 'activeslide'      # Class to add to the active slide/dot
+    lazy: false                     # Lazy load images in the slider, set data-lazy="imageurl" on elements. On an img the src attribute will be set and the background-image style will be set on other element types
 */
 
 (function ( $ ) {
@@ -67,6 +68,7 @@
             sliderspeed: 5000,
             slideselector: 'div',
             activeslide: 'activeslide',
+            lazy: false,
         };
         
         var settings = $.extend( {}, defaults, options );
@@ -125,6 +127,9 @@
                         
             // Apply activeslide class to first slide
             slider.children(settings.slideselector).first().addClass(settings.activeslide);
+            // If lazy loading is active load the first and 2nd slider
+            lazy(slider.children(settings.slideselector).eq(0));
+            lazy(slider.children(settings.slideselector).eq(1));
             
             if (settings.pauseonhover) {
                 slider.mouseover(function() {
@@ -187,6 +192,9 @@
             else if (slide>currentSlide(slider)) direction=1;
             else if (slide<currentSlide(slider)) direction=-1;
 */
+            
+            lazy(slider.children(settings.slideselector).eq(slide));
+            lazy(slider.children(settings.slideselector).eq(slide+1));
 
             if (settings.transition=='fade') {
                 if (slide>=slideCount(slider)) slide=0;
@@ -239,6 +247,20 @@
         	return 'ontouchstart' in window || 'onmsgesturechange' in window;
         }
         
+        function lazy(t) {
+            if (!settings.lazy) return false;
+            function loadIt(t) {
+                if ($(t).parent().prop('nodeName')=='IMG')
+                    $(t).attr('src', $(t).data('lazy'));
+                else
+                    $(t).css('background-image', "url('"+$(t).data('lazy')+"')");
+            }
+            if ($(t).data('lazy')) loadIt(t);
+            $(t).find('[data-lazy]').each(function() {
+                loadIt(this);
+            });
+        }
+        
     };
 
 }( jQuery ));
@@ -253,127 +275,3 @@
  * @version 1.0 (15th July 2010)
  */
 (function($){$.fn.touchwipe_slider=function(settings){var config={min_move_x:20,min_move_y:20,wipeLeft:function(){},wipeRight:function(){},wipeUp:function(){},wipeDown:function(){},preventDefaultEvents:true};if(settings)$.extend(config,settings);this.each(function(){var startX;var startY;var isMoving=false;function cancelTouch(){this.removeEventListener('touchmove',onTouchMove);startX=null;isMoving=false}function onTouchMove(e){if(config.preventDefaultEvents){e.preventDefault()}if(isMoving){var x=e.touches[0].pageX;var y=e.touches[0].pageY;var dx=startX-x;var dy=startY-y;if(Math.abs(dx)>=config.min_move_x){cancelTouch();if(dx>0){config.wipeLeft()}else{config.wipeRight()}}else if(Math.abs(dy)>=config.min_move_y){cancelTouch();if(dy>0){config.wipeDown()}else{config.wipeUp()}}}}function onTouchStart(e){if(e.touches.length==1){startX=e.touches[0].pageX;startY=e.touches[0].pageY;isMoving=true;this.addEventListener('touchmove',onTouchMove,false)}}if('ontouchstart'in document.documentElement){this.addEventListener('touchstart',onTouchStart,false)}});return this}})(jQuery);
-
-
-/*
-var sliders = new Array();
-var sliderTimeout = false;
-function sliderSize(t) {
-    $(t).children('UL').children('LI').each(function(n) {
-        $(this).css('left',(n-2-sliders[t])*$(t).width())
-    });
-}
-function sliderGo(t,slide,instant) {
-    if (!instant) {
-        var max=$(t).children('UL').children('LI').length-4;
-        if (slide>=max) {
-            sliderGo(t,-1,true)
-            slide=0;
-        }
-        if (slide<0) {
-            sliderGo(t,max,true)
-            slide=max-1;
-        }
-    }
-    $(t).find('.dots > span.active').removeClass('active');
-    $(t).find('.dots > span:eq('+slide+')').addClass('active');
-    
-    sliders[t]=slide;
-    
-    $(t).children('UL').children('LI').each(function(n) {
-        if (instant)
-            $(this).css('left',(n-2-slide)*$(t).width())
-        else
-            $(this).animate({'left':(n-2-slide)*$(t).width()})
-    });
-}
-function sliderInit(t) {
-    sliders[t]=0;
-    $(t).append('<div class="dots"></div><span class="next"></span><span class="prev"></span>');
-    $(t).find('SPAN.next').click(function() {
-        clearInterval(sliderTimeout);
-        sliderGo(t,sliders[t]+1);
-    });
-    $(t).find('SPAN.prev').click(function() {
-        clearInterval(sliderTimeout);
-        sliderGo(t,sliders[t]-1);
-    });
-    for (i=0; i<$(t).children('UL').children('LI').length; i++) {
-        $(t).find('.dots').append('<span data-dot="'+i+'"></span>');
-    }
-    $(t).find('.dots > span:first').addClass('active');
-    $(t).find('.dots > span').click(function() {
-        clearInterval(sliderTimeout);
-        sliderGo(t,$(this).data('dot'));
-    });
-    $(t).children('UL').prepend($(t).children('UL').children('LI:last').clone());
-    $(t).children('UL').prepend($(t).children('UL').children('LI:nth-last-child(2)').clone());
-    $(t).children('UL').append($(t).children('UL').children('LI:first').next().next().clone());
-    $(t).children('UL').append($(t).children('UL').children('LI:first').next().next().next().clone());
-    $(t).children('UL').children('LI').children('A').click(function() {
-        var i=$(this).parent().index()-2;
-        if (i!=sliders[t]) {
-            clearInterval(sliderTimeout);
-            sliderGo(t,i);
-            return false;        
-        }
-    });
-    sliderSize(t);
-    $(window).resize(function() {
-        sliderSize(t);
-    });
-	if (isTouch()) {
-		$(t).touchwipe({
-			wipeLeft: function() { $(t).find('SPAN.next').click(); },
-			wipeRight: function() { $(t).find('SPAN.prev').click(); },
-			min_move_x: 50,
-			min_move_y: 2000,
-			preventDefaultEvents: false
-		});
-		$(t).find('SPAN.next').hide();
-		$(t).find('SPAN.prev').hide();
-	}
-}
-
-$(document).ready(function() {
-    $('SPAN.down').click(function() {
-        var s=$(this).parent().offset().top+$(this).parent().outerHeight();
-        console.log($(this).parent().offset().top,$(window).scrollTop());
-        $('html, body').stop().animate({scrollTop:s}, '500', 'swing');
-    });
-    sliderInit('.slider1');
-    sliderInit('.slider2');
-    sliderInit('.slider3');
-    sliderInit('.slider4');
-	sliderTimeout=setInterval(function() { sliderGo('.slider1',sliders['.slider1']+1); }, 3000);
-	sliderTimeout=setInterval(function() { sliderGo('.slider4',sliders['.slider4']+1); }, 3000);
-	$(document).keydown(function(e) {
-		var keyCode=e.keyCode || e.which;
-		if (keyCode==39) {
-			$('.slider .next').click();
-			return false;
-		}
-		if (keyCode==37) {
-			$('.slider .prev').click();
-			return false;
-		}
-	});
-    $('.menuicon').click(function() {
-        $('NAV').toggleClass('menuactive'); 
-    });
-});
-
-function isTouch() {
-	return 'ontouchstart' in window || 'onmsgesturechange' in window;
-}
-
-/**
- * jQuery Plugin to obtain touch gestures from iPhone, iPod Touch and iPad, should also work with Android mobile phones (not tested yet!)
- * Common usage: wipe images (left and right to show the previous or next image)
- * 
- * @author Andreas Waltl, netCU Internetagentur (http://www.netcu.de)
- * @version 1.1.1 (9th December 2010) - fix bug (older IE's had problems)
- * @version 1.1 (1st September 2010) - support wipe up and wipe down
- * @version 1.0 (15th July 2010)
- */
-//(function($){$.fn.touchwipe=function(settings){var config={min_move_x:20,min_move_y:20,wipeLeft:function(){},wipeRight:function(){},wipeUp:function(){},wipeDown:function(){},preventDefaultEvents:true};if(settings)$.extend(config,settings);this.each(function(){var startX;var startY;var isMoving=false;function cancelTouch(){this.removeEventListener('touchmove',onTouchMove);startX=null;isMoving=false}function onTouchMove(e){if(config.preventDefaultEvents){e.preventDefault()}if(isMoving){var x=e.touches[0].pageX;var y=e.touches[0].pageY;var dx=startX-x;var dy=startY-y;if(Math.abs(dx)>=config.min_move_x){cancelTouch();if(dx>0){config.wipeLeft()}else{config.wipeRight()}}else if(Math.abs(dy)>=config.min_move_y){cancelTouch();if(dy>0){config.wipeDown()}else{config.wipeUp()}}}}function onTouchStart(e){if(e.touches.length==1){startX=e.touches[0].pageX;startY=e.touches[0].pageY;isMoving=true;this.addEventListener('touchmove',onTouchMove,false)}}if('ontouchstart'in document.documentElement){this.addEventListener('touchstart',onTouchStart,false)}});return this}})(jQuery);

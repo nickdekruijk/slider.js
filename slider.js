@@ -2,9 +2,9 @@
     Slider jQuery plugin
     ====================
     (c)2016 Nick de Kruijk
-    
+
     Version 0.0.2
-    
+
     Usage:
     HTML:
     <div class="slider">
@@ -12,9 +12,9 @@
         <div>Slide 2 content</div>
         <div>Slide 3 content</div>
     </div>
-    
+
     CSS:
-    Style your slider however you want. 
+    Style your slider however you want.
     The .slider element will be the viewport. You probably want this to have CSS {overflow:hidden}
     The slides(divs) inside the viewport will be set to absolute positioned, 100% width and 100% height of the viewport/parent div
     You do need to add CSS for the dots if you want them, for example:
@@ -33,21 +33,21 @@
         DIV.slider:hover .next:hover,
         DIV.slider:hover .prev:hover {background-color:rgba(0,0,0,0.6);cursor:pointer}
 
-    
+
     JS:
     $('DIV.slider').slider({
         option1:'value1',
         option2:'value2'
     );
-    
+
     Options: default value|other options
-    
+
     transition: fade|swipe|scroll   # Fadein/-out, Swipe from right to left or scroll everything
     transitionspeed: 400            # The transition speed in milliseconds, e.g. time it takes to fadein/-out or swipe to next slide
     autoplay: true|false            # Automaticaly start playing
     pauseonhover true|false         # Pause autoplay when user hovers over the viewport
-    arrowkeys: true|false           # Enable keyboard left and right arrow keys    
-    touchwipe: true|false           # Enable touch device left and right swipe gestures    
+    arrowkeys: true|false           # Enable keyboard left and right arrow keys
+    touchwipe: true|false           # Enable touch device left and right swipe gestures
     sliderspeed: 5000               # Time to wait in milliseconds before next slide is shown when autoplay=true
     slideselector: 'div'            # The viewport DOM child element that will represent slides. Could also be .slide if you have html like <div class="slider"><div class="slide">Slide content</div> etc.
     activeslide: 'activeslide'      # Class to add to the active slide/dot
@@ -55,9 +55,9 @@
 */
 
 (function ( $ ) {
-    
+
     $.fn.slider = function(options) {
-        
+
         var defaults = {
             transition: 'fade',
             transitionspeed: 400,
@@ -70,20 +70,20 @@
             activeslide: 'activeslide',
             lazy: false,
         };
-        
+
         var settings = $.extend( {}, defaults, options );
         var autoplayTimeout=false;
-        
+
         return this.each(function() {
             var slider = $(this);
-            
+
             // So viewport position to relative if current position is undefined or static
             if (!slider.css('position') || slider.css('position')=='static')
                 slider.css('position', 'relative');
-            
+
             // Set each slide to absolute, block and 100% width/height
             slider.children(settings.slideselector).css('position','absolute').css('display','block').width('100%').height('100%');
-            
+
             if (settings.transition=='fade') {
                 // Give first slide z-index:2
                 slider.children(settings.slideselector).first().css('z-index',2);
@@ -103,7 +103,7 @@
 
             // If slider has only 1 slide stop further action since we won't need autoplay, next/previous etc.
             if (slideCount(slider)<=1) return true;
-            
+
             // Add dots
             slider.append('<span class="dots"></span>');
             for (i=0; i<slideCount(slider); i++) slider.children('.dots').append('<span>'+(i+1)+'</span>');
@@ -112,7 +112,7 @@
                 stopautoplay(slider);
                 gotoSlide(slider,$(this).text()-1);
             });
-            
+
             // Add previous and next arrows
             slider.append('<span class="next"><span></span></span>');
             slider.append('<span class="prev"><span></span></span>');
@@ -124,13 +124,13 @@
                 stopautoplay(slider);
                 prevSlide(slider);
             });
-                        
+
             // Apply activeslide class to first slide
             slider.children(settings.slideselector).first().addClass(settings.activeslide);
             // If lazy loading is active load the first and 2nd slider
             lazy(slider.children(settings.slideselector).eq(0));
             lazy(slider.children(settings.slideselector).eq(1));
-            
+
             if (settings.pauseonhover) {
                 slider.mouseover(function() {
                     clearTimeout(autoplayTimeout);
@@ -166,7 +166,7 @@
         		$(slider).children('span.prev').hide();
         	}
         });
-                
+
         function stopautoplay(slider) {
             settings.autoplay=false;
             clearTimeout(autoplayTimeout);
@@ -176,13 +176,13 @@
                 // After mouseout and pauseonhover we don't want a quicker speed
                 var speed=settings.sliderspeed;
                 if (aftermouseout && speed>1000) speed=1000;
-                
+
                 autoplayTimeout=setTimeout(function() {
                     nextSlide(slider);
                 }, speed);
             }
         }
-        
+
         function gotoSlide(slider,slide) {
 
 /*
@@ -192,7 +192,7 @@
             else if (slide>currentSlide(slider)) direction=1;
             else if (slide<currentSlide(slider)) direction=-1;
 */
-            
+
             lazy(slider.children(settings.slideselector).eq(slide));
             lazy(slider.children(settings.slideselector).eq(slide+1));
 
@@ -220,7 +220,7 @@
 
             autoplay(slider);
         }
-        
+
         function currentSlide(slider) {
             var currentSlide=false;
             slider.children(settings.slideselector).each(function(n) {
@@ -235,7 +235,7 @@
             else
                 return slider.children(settings.slideselector).length;
         }
-        
+
         function nextSlide(slider) {
             gotoSlide(slider, currentSlide(slider)+1);
         }
@@ -246,7 +246,7 @@
         function isTouch() {
         	return 'ontouchstart' in window || 'onmsgesturechange' in window;
         }
-        
+
         function lazy(t) {
             if (!settings.lazy) return false;
             function loadIt(t) {
@@ -260,7 +260,7 @@
                 loadIt(this);
             });
         }
-        
+
     };
 
 }( jQuery ));
@@ -268,7 +268,7 @@
 /**
  * jQuery Plugin to obtain touch gestures from iPhone, iPod Touch and iPad, should also work with Android mobile phones (not tested yet!)
  * Common usage: wipe images (left and right to show the previous or next image)
- * 
+ *
  * @author Andreas Waltl, netCU Internetagentur (http://www.netcu.de)
  * @version 1.1.1 (9th December 2010) - fix bug (older IE's had problems)
  * @version 1.1 (1st September 2010) - support wipe up and wipe down

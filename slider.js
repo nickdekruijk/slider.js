@@ -3,7 +3,7 @@
     ====================
     (c)2016 Nick de Kruijk
 
-    Version 0.0.2
+    Version 0.0.3
 
     Usage:
     HTML:
@@ -85,6 +85,8 @@
             slider.children(settings.slideselector).css('position','absolute').css('display','block').width('100%').height('100%');
 
             if (settings.transition=='fade') {
+                // Hide all slides except first
+                slider.children(settings.slideselector).not(':eq(0)').css('display','none');
                 // Give first slide z-index:2
                 slider.children(settings.slideselector).first().css('z-index',2);
             }

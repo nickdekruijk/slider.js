@@ -103,8 +103,11 @@
                 });
             }
 
-            // If slider has only 1 slide stop further action since we won't need autoplay, next/previous etc.
-            if (slideCount(slider)<=1) return true;
+            // If slider has only 1 slide stop further action since we won't need autoplay, next/previous etc. But do lazy load
+            if (slideCount(slider)<=1) {
+                lazy(slider.children(settings.slideselector).eq(0));
+                return true;
+            }
 
             // Add dots
             slider.append('<span class="dots"></span>');

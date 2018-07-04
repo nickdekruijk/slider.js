@@ -1,9 +1,9 @@
 /*
     Slider jQuery plugin
     ====================
-    (c)2016 Nick de Kruijk
+    (c)2018 Nick de Kruijk
 
-    Version 0.0.3
+    Version 0.0.4
 
     Usage:
     HTML:
@@ -50,6 +50,7 @@
     touchwipe: true|false           # Enable touch device left and right swipe gestures
     sliderspeed: 5000               # Time to wait in milliseconds before next slide is shown when autoplay=true
     slideselector: 'div'            # The viewport DOM child element that will represent slides. Could also be .slide if you have html like <div class="slider"><div class="slide">Slide content</div> etc.
+    slidewidth: '100',              # Width of each slide in percentage
     activeslide: 'activeslide'      # Class to add to the active slide/dot
     lazy: false                     # Lazy load images in the slider, set data-lazy="imageurl" on elements. On an img the src attribute will be set and the background-image style will be set on other element types
 */
@@ -68,6 +69,7 @@
             sliderspeed: 5000,
             slideselector: 'div',
             activeslide: 'activeslide',
+            slidewidth: 100,
             lazy: false,
         };
 
@@ -82,7 +84,7 @@
                 slider.css('position', 'relative');
 
             // Set each slide to absolute, block and 100% width/height
-            slider.children(settings.slideselector).css('position','absolute').css('display','block').width('100%').height('100%');
+            slider.children(settings.slideselector).css('position','absolute').css('display','block').width(settings.slidewidth+'%').height('100%');
 
             if (settings.transition=='fade') {
                 // Hide all slides except first
@@ -96,10 +98,10 @@
             }
             if (settings.transition=='scroll') {
                 // Copy last and 2nd to last slide to the front and first and second slide to the end
-                slider.prepend(slider.children(settings.slideselector).slice(-2).clone());
-                slider.append(slider.children(settings.slideselector).slice(2,4).clone());
+//                 slider.prepend(slider.children(settings.slideselector).slice(-2).clone());
+//                 slider.append(slider.children(settings.slideselector).slice(2,4).clone());
                 slider.children(settings.slideselector).each(function(n) {
-                    $(this).css('left',(n-2)*100+'%')
+                    $(this).css('left',(n)*settings.slidewidth+((100-settings.slidewidth)/2)+'%')
                 });
             }
 
@@ -220,11 +222,13 @@
                 slider.children('.'+settings.activeslide).removeClass(settings.activeslide).css('z-index',1);
                 slider.children(settings.slideselector).eq(slide).addClass(settings.activeslide).css('z-index',2).css('left',direction==-1?'-100%':'100%').animate({left:0},settings.transitionspeed);
             } else if (settings.transition=='scroll') {
-                // Todo: Scroll it!
+                // Todo: Scroll looping
+                if (slide>=slideCount(slider)) slide=0;
+                if (slide<0) slide=slideCount(slider)-1;
                 slider.children('.'+settings.activeslide).removeClass(settings.activeslide);
                 slider.children(settings.slideselector).eq(slide).addClass(settings.activeslide);
                 slider.children(settings.slideselector).each(function(n) {
-                    $(this).animate({'left':((n-2-slide)*100)+'%'})
+                    $(this).animate({'left':((n-slide)*settings.slidewidth)+((100-settings.slidewidth)/2)+'%'})
                 });
             }
             // Activate the right dot
@@ -243,10 +247,7 @@
         }
 
         function slideCount(slider) {
-            if (settings.transition=='scroll')
-                return slider.children(settings.slideselector).length-4;
-            else
-                return slider.children(settings.slideselector).length;
+            return slider.children(settings.slideselector).length;
         }
 
         function nextSlide(slider) {

@@ -111,11 +111,20 @@
 
             // Add dots
             slider.append('<span class="dots"></span>');
-            for (i=0; i<slideCount(slider); i++) slider.children('.dots').append('<span>'+(i+1)+'</span>');
+            for (i=0; i<slideCount(slider); i++) {
+                var t = slider.children(settings.slideselector).eq(i);
+                if (t.data('dot')) {
+                    slider.children('.dots').append('<span>'+t.data('dot')+'</span>');
+                } else {
+                    slider.children('.dots').append('<span>'+(i+1)+'</span>');
+                }
+            }
             slider.children('.dots').children('span').first().addClass(settings.activeslide);
-            slider.children('.dots').children('span').click(function() {
-                stopautoplay(slider);
-                gotoSlide(slider,$(this).text()-1);
+            slider.children('.dots').children('span').each(function(n) {
+                $(this).click(function() {
+                    stopautoplay(slider);
+                    gotoSlide(slider, n);
+                });
             });
 
             // Add previous and next arrows

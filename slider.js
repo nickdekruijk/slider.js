@@ -199,13 +199,6 @@
 
         function gotoSlide(slider,slide) {
 
-/*
-            var direction=0;
-            if (slide==0 && currentSlide(slider)>1) direction=1;
-            else if (slide==slideCount(slider)-1 && currentSlide(slider)==0) direction=-1;
-            else if (slide>currentSlide(slider)) direction=1;
-            else if (slide<currentSlide(slider)) direction=-1;
-*/
 
             lazy(slider.children(settings.slideselector).eq(slide));
             lazy(slider.children(settings.slideselector).eq(slide+1));
@@ -217,6 +210,12 @@
                 slider.children('.'+settings.activeslide).removeClass(settings.activeslide).css('z-index',1);
                 slider.children(settings.slideselector).eq(slide).hide().addClass(settings.activeslide).css('z-index',2).fadeIn(settings.transitionspeed);
             } else if (settings.transition=='swipe') {
+                var direction = 0;
+                if ((slide == 0 && currentSlide(slider) > 1) || slide>currentSlide(slider)) {
+                    direction=1;
+                } else if ((slide == slideCount(slider) - 1 && currentSlide(slider) == 0) || slide<currentSlide(slider)) {
+                    direction=-1;
+                }
                 slider.children(settings.slideselector).css('z-index',0);
                 slider.children('.'+settings.activeslide).removeClass(settings.activeslide).css('z-index',1);
                 slider.children(settings.slideselector).eq(slide).addClass(settings.activeslide).css('z-index',2).css('left',direction==-1?'-100%':'100%').animate({left:0},settings.transitionspeed);

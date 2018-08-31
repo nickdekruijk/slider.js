@@ -3,7 +3,7 @@
     ====================
     (c)2018 Nick de Kruijk
 
-    Version 0.0.4
+    Version 0.0.5
 
     Usage:
     HTML:
@@ -47,6 +47,7 @@
     autoplay: true|false            # Automaticaly start playing
     pauseonhover true|false         # Pause autoplay when user hovers over the viewport
     arrowkeys: true|false           # Enable keyboard left and right arrow keys
+    touchkeys: false|true           # Show arrow keys on touch devices
     touchwipe: true|false           # Enable touch device left and right swipe gestures
     sliderspeed: 5000               # Time to wait in milliseconds before next slide is shown when autoplay=true
     slideselector: 'div'            # The viewport DOM child element that will represent slides. Could also be .slide if you have html like <div class="slider"><div class="slide">Slide content</div> etc.
@@ -65,6 +66,7 @@
             autoplay: true,
             pauseonhover: true,
             arrowkeys: true,
+            touchkeys: false,
             touchwipe: true,
             sliderspeed: 5000,
             slideselector: 'div',
@@ -178,8 +180,10 @@
         			preventDefaultEvents: false
         		});
         		// Hide arrow keys on touch devices
-        		$(slider).children('span.next').hide();
-        		$(slider).children('span.prev').hide();
+                if (!settings.touchkeys) {
+                    $(slider).children('span.next').hide();
+                    $(slider).children('span.prev').hide();
+                }
         	}
         });
 

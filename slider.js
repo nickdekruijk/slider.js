@@ -3,7 +3,7 @@
     ====================
     (c)2018 Nick de Kruijk
 
-    Version 0.0.5
+    Version 0.0.6
 
     Usage:
     HTML:
@@ -117,11 +117,7 @@
             slider.append('<span class="dots"></span>');
             for (i=0; i<slideCount(slider); i++) {
                 var t = slider.children(settings.slideselector).eq(i);
-                if (t.data('dot')) {
-                    slider.children('.dots').append('<span>'+t.data('dot')+'</span>');
-                } else {
-                    slider.children('.dots').append('<span>'+(i+1)+'</span>');
-                }
+                slider.children('.dots').append('<span aria-label="' + t.attr('aria-label') + '">' + (t.data('dot') ? t.data('dot') : (i+1)) + '</span>');
             }
             slider.children('.dots').children('span').first().addClass(settings.activeslide);
             slider.children('.dots').children('span').each(function(n) {
@@ -144,7 +140,7 @@
             });
 
             // Apply activeslide class to first slide
-            slider.children(settings.slideselector).first().addClass(settings.activeslide);
+            slider.children(settings.slideselector).first().addClass(settings.activeslide).attr('aria-hidden', false);
             // If lazy loading is active load the first and 2nd slider
             lazy(slider.children(settings.slideselector).eq(0));
             lazy(slider.children(settings.slideselector).eq(1));
@@ -213,8 +209,8 @@
                 if (slide>=slideCount(slider)) slide=0;
                 if (slide<0) slide=slideCount(slider)-1;
                 slider.children(settings.slideselector).css('z-index',0);
-                slider.children('.'+settings.activeslide).removeClass(settings.activeslide).css('z-index',1);
-                slider.children(settings.slideselector).eq(slide).hide().addClass(settings.activeslide).css('z-index',2).fadeIn(settings.transitionspeed);
+                slider.children('.'+settings.activeslide).removeClass(settings.activeslide).css('z-index',1).attr('aria-hidden', true);
+                slider.children(settings.slideselector).eq(slide).hide().addClass(settings.activeslide).css('z-index',2).fadeIn(settings.transitionspeed).attr('aria-hidden', false);
             } else if (settings.transition=='swipe') {
                 var direction = 0;
                 if ((slide == 0 && currentSlide(slider) > 1) || slide>currentSlide(slider)) {
@@ -223,14 +219,14 @@
                     direction=-1;
                 }
                 slider.children(settings.slideselector).css('z-index',0);
-                slider.children('.'+settings.activeslide).removeClass(settings.activeslide).css('z-index',1);
-                slider.children(settings.slideselector).eq(slide).addClass(settings.activeslide).css('z-index',2).css('left',direction==-1?'-100%':'100%').animate({left:0},settings.transitionspeed);
+                slider.children('.'+settings.activeslide).removeClass(settings.activeslide).css('z-index',1).attr('aria-hidden', true);
+                slider.children(settings.slideselector).eq(slide).addClass(settings.activeslide).css('z-index',2).css('left',direction==-1?'-100%':'100%').animate({left:0},settings.transitionspeed).attr('aria-hidden', false);
             } else if (settings.transition=='scroll') {
                 // Todo: Scroll looping
                 if (slide>=slideCount(slider)) slide=0;
                 if (slide<0) slide=slideCount(slider)-1;
-                slider.children('.'+settings.activeslide).removeClass(settings.activeslide);
-                slider.children(settings.slideselector).eq(slide).addClass(settings.activeslide);
+                slider.children('.'+settings.activeslide).removeClass(settings.activeslide).attr('aria-hidden', true);
+                slider.children(settings.slideselector).eq(slide).addClass(settings.activeslide).attr('aria-hidden', false);
                 slider.children(settings.slideselector).each(function(n) {
                     $(this).animate({'left':((n-slide)*settings.slidewidth)+((100-settings.slidewidth)/2)+'%'})
                 });

@@ -52,8 +52,9 @@ transition: fade|swipe|scroll   # Fadein/-out, Swipe from right to left or scrol
 transitionspeed: 400            # The transition speed in milliseconds, e.g. time it takes to fadein/-out or swipe to next slide
 alternativefade: false|true     # Use alternative method for fading so slides with transparent elements will work better but site background will be slightly visible during transition
 autoplay: true|false            # Automaticaly start playing
-pauseonhover true|false         # Pause autoplay when user hovers over the viewport
+pauseonhover: true|false         # Pause autoplay when user hovers over the viewport
 arrowkeys: true|false           # Enable keyboard left and right arrow keys
+touchkeys: false|true           # Show arrow keys on touch devices
 touchwipe: true|false           # Enable touch device left and right swipe gestures
 sliderspeed: 5000               # Time to wait in milliseconds before next slide is shown when autoplay=true
 slideselector: 'div'            # The viewport DOM child element that will represent slides. Could also be .slide if you have html like <div class="slider"><div class="slide">Slide content</div> etc.

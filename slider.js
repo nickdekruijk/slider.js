@@ -1,9 +1,9 @@
 /*
     Slider jQuery plugin
     ====================
-    (c)2018 Nick de Kruijk
+    (c)2019 Nick de Kruijk
 
-    Version 0.0.6
+    Version 0.0.7
 
     Usage:
     HTML:
@@ -44,6 +44,7 @@
 
     transition: fade|swipe|scroll   # Fadein/-out, Swipe from right to left or scroll everything
     transitionspeed: 400            # The transition speed in milliseconds, e.g. time it takes to fadein/-out or swipe to next slide
+    alternativefade: false|true     # Use alternative method for fading so slides with transparent elements will work better but site background will be slightly visible during transition
     autoplay: true|false            # Automaticaly start playing
     pauseonhover true|false         # Pause autoplay when user hovers over the viewport
     arrowkeys: true|false           # Enable keyboard left and right arrow keys
@@ -63,6 +64,7 @@
         var defaults = {
             transition: 'fade',
             transitionspeed: 400,
+            alternativefade: false,
             autoplay: true,
             pauseonhover: true,
             arrowkeys: true,
@@ -90,7 +92,7 @@
 
             if (settings.transition=='fade') {
                 // Hide all slides except first
-                slider.children(settings.slideselector).not(':eq(0)').css('display','none');
+                slider.children(settings.slideselector).not(':eq(0)').css('opacity',0);
                 // Give first slide z-index:2
                 slider.children(settings.slideselector).first().css('z-index',2);
             }
@@ -200,8 +202,6 @@
         }
 
         function gotoSlide(slider,slide) {
-
-
             lazy(slider.children(settings.slideselector).eq(slide));
             lazy(slider.children(settings.slideselector).eq(slide+1));
 
@@ -209,8 +209,11 @@
                 if (slide>=slideCount(slider)) slide=0;
                 if (slide<0) slide=slideCount(slider)-1;
                 slider.children(settings.slideselector).css('z-index',0);
+                if (settings.alternativefade) {
+                    slider.children('.'+settings.activeslide).animate({opacity:0},settings.transitionspeed);
+                }
                 slider.children('.'+settings.activeslide).removeClass(settings.activeslide).css('z-index',1).attr('aria-hidden', true);
-                slider.children(settings.slideselector).eq(slide).hide().addClass(settings.activeslide).css('z-index',2).fadeIn(settings.transitionspeed).attr('aria-hidden', false);
+                slider.children(settings.slideselector).eq(slide).addClass(settings.activeslide).css('z-index',2).css('opacity',0).animate({opacity:1},settings.transitionspeed).attr('aria-hidden', false);
             } else if (settings.transition=='swipe') {
                 var direction = 0;
                 if ((slide == 0 && currentSlide(slider) > 1) || slide>currentSlide(slider)) {

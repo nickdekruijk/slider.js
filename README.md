@@ -13,7 +13,7 @@ HTML:
 ```
 
 ###CSS
-Style your slider however you want. 
+Style your slider however you want.
 The .slider element will be the viewport. You probably want this to have CSS {overflow:hidden}
 
 The slides(divs) inside the viewport will be set to absolute positioned, 100% width and 100% height of the viewport/parent div.
@@ -50,10 +50,11 @@ $('DIV.slider').slider({
 ```
 transition: fade|swipe|scroll   # Fadein/-out, Swipe from right to left or scroll everything
 transitionspeed: 400            # The transition speed in milliseconds, e.g. time it takes to fadein/-out or swipe to next slide
+alternativefade: false|true     # Use alternative method for fading so slides with transparent elements will work better but site background will be slightly visible during transition
 autoplay: true|false            # Automaticaly start playing
 pauseonhover true|false         # Pause autoplay when user hovers over the viewport
-arrowkeys: true|false           # Enable keyboard left and right arrow keys    
-touchwipe: true|false           # Enable touch device left and right swipe gestures    
+arrowkeys: true|false           # Enable keyboard left and right arrow keys
+touchwipe: true|false           # Enable touch device left and right swipe gestures
 sliderspeed: 5000               # Time to wait in milliseconds before next slide is shown when autoplay=true
 slideselector: 'div'            # The viewport DOM child element that will represent slides. Could also be .slide if you have html like <div class="slider"><div class="slide">Slide content</div> etc.
 activeslide: 'activeslide'      # Class to add to the active slide/dot

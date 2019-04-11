@@ -3,7 +3,7 @@
     ====================
     (c)2019 Nick de Kruijk
 
-    Version 0.0.7
+    Version 0.0.8
 
     Usage:
     HTML:
@@ -32,7 +32,10 @@
         DIV.slider:hover .prev>SPAN {transform:rotate(-135deg);top:13px;left:17px}
         DIV.slider:hover .next:hover,
         DIV.slider:hover .prev:hover {background-color:rgba(0,0,0,0.6);cursor:pointer}
-
+    And finaly some example CSS for position index/total element
+        DIV.slider .position {position:absolute;bottom:0;text-align:center}
+        DIV.slider .position .divider {margin:0 5px}
+        DIV.slider .position .divider:after {content:'/'}
 
     JS:
     $('DIV.slider').slider({
@@ -54,6 +57,8 @@
     slideselector: 'div'            # The viewport DOM child element that will represent slides. Could also be .slide if you have html like <div class="slider"><div class="slide">Slide content</div> etc.
     slidewidth: '100',              # Width of each slide in percentage
     activeslide: 'activeslide'      # Class to add to the active slide/dot
+    showdots: true,                 # Show the navigation dots
+    showposition: false,            # Show the position index/total element
     lazy: false                     # Lazy load images in the slider, set data-lazy="imageurl" on elements. On an img the src attribute will be set and the background-image style will be set on other element types
 */
 
@@ -74,6 +79,8 @@
             slideselector: 'div',
             activeslide: 'activeslide',
             slidewidth: 100,
+            showdots: true,
+            showposition: false,
             lazy: false,
         };
 
@@ -116,18 +123,25 @@
             }
 
             // Add dots
-            slider.append('<span class="dots"></span>');
-            for (i=0; i<slideCount(slider); i++) {
-                var t = slider.children(settings.slideselector).eq(i);
-                slider.children('.dots').append('<span aria-label="' + t.attr('aria-label') + '">' + (t.data('dot') ? t.data('dot') : (i+1)) + '</span>');
-            }
-            slider.children('.dots').children('span').first().addClass(settings.activeslide);
-            slider.children('.dots').children('span').each(function(n) {
-                $(this).click(function() {
-                    stopautoplay(slider);
-                    gotoSlide(slider, n);
+            if (settings.showdots) {
+                slider.append('<span class="dots"></span>');
+                for (i=0; i<slideCount(slider); i++) {
+                    var t = slider.children(settings.slideselector).eq(i);
+                    slider.children('.dots').append('<span aria-label="' + t.attr('aria-label') + '">' + (t.data('dot') ? t.data('dot') : (i+1)) + '</span>');
+                }
+                slider.children('.dots').children('span').first().addClass(settings.activeslide);
+                slider.children('.dots').children('span').each(function(n) {
+                    $(this).click(function() {
+                        stopautoplay(slider);
+                        gotoSlide(slider, n);
+                    });
                 });
-            });
+            }
+
+            // Add position
+            if (settings.showposition) {
+                slider.append('<span class="position"><span class="index">1</span><span class="divider"></span><span class="total">'+slideCount(slider)+'</span></span>');
+            }
 
             // Add previous and next arrows
             slider.append('<span class="next"><span></span></span>');
@@ -235,8 +249,14 @@
                 });
             }
             // Activate the right dot
-            slider.children('.dots').children('span').removeClass(settings.activeslide);
-            slider.children('.dots').children('span').eq(slide).addClass(settings.activeslide);
+            if (settings.showdots) {
+                slider.children('.dots').children('span').removeClass(settings.activeslide);
+                slider.children('.dots').children('span').eq(slide).addClass(settings.activeslide);
+            }
+            // Update position index
+            if (settings.showposition) {
+                slider.children('.position').children('.index').text(slide+1);
+            }
 
             autoplay(slider);
         }
